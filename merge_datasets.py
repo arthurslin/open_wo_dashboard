@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import math
 import datetime
 import glob
 import os
@@ -42,6 +43,7 @@ def clean_syspro(data):
             df[i] = np.nan
         df["Org"] = "Wilmington"
         df["Status"] = "Released"
+        df.dropna(subset="Stock Code",inplace=True)
         df.rename(columns={"Stock Code": "Item", "Job Description": "Item Description","Labor Cost":"WIP Labor","Materia lCost":"WIP Material"},inplace=True)
         df["SOURCE_SYSTEM"] = "Syspro"
 
@@ -80,9 +82,9 @@ def return_all_dfs():
         datetime.date.today() - x.date() if not pd.isnull(x) else pd.NaT
     )
 
-    new_df["WO Age"] = new_df["WO Age"].dt.days.fillna(pd.NA)
+    new_df["WO Age"] = new_df["WO Age"].dt.days
     new_df["WIP Value"] = new_df["WIP Value"].fillna(0)
-    new_df = new_df.replace({np.nan: 'Empty'})
+    new_df[["Status", "Org","Job Type"]] = new_df[["Status", "Org","Job Type"]].fillna("EMPTY_VALUE")
     return new_df
 
 end_dataframe = return_all_dfs()

@@ -59,19 +59,32 @@ def clean_oracle(data):
 default_names = ["SOURCE_SYSTEM","Org", "Job", "Item", "Item Description", "Status", "Job Type", "Start Quantity", "Quantity Completed",
                  "Quantity Due", "Release Date", "Actual Start Date", "Expected Completion Date", "WIP Labor", "WIP Material", "WIP Value",]
 
+def return_all_dfs():
+    oracle_items = load_data(["oracle"])
+    sap_items = load_data(["sap"])
+    syspro_items = load_data(["syspro"])
+    clean_sap(sap_items)
+    clean_syspro(syspro_items)
+    clean_oracle(oracle_items)
 
-oracle_items = load_data(["oracle"])
-sap_items = load_data(["sap"])
-syspro_items = load_data(["syspro"])
-clean_sap(sap_items)
-clean_syspro(syspro_items)
-clean_oracle(oracle_items)
+    all_dfs = oracle_items + sap_items + syspro_items
+    all_dfs_clean = []
+    for df in all_dfs:
+        all_dfs_clean.append(df[default_names])
 
-all_dfs = oracle_items + sap_items + syspro_items
-all_dfs_clean = []
-for df in all_dfs:
-    all_dfs_clean.append(df[default_names])
+    new_df = pd.concat(all_dfs_clean)
 
-new_df = pd.concat(all_dfs_clean)
+    new_df["Actual Start Date"] = pd.to_datetime(new_df["Actual Start Date"], errors='coerce')
 
-new_df.to_excel("merged_items.xlsx",index=False)
+    new_df["WO Age"] = new_df["Actual Start Date"].apply(lambda x: 
+        datetime.date.today() - x.date() if not pd.isnull(x) else pd.NaT
+    )
+
+    new_df["WO Age"] = new_df["WO Age"].dt.days.fillna(pd.NA)
+    new_df["WIP Value"] = new_df["WIP Value"].fillna(0)
+    new_df = new_df.replace({np.nan: 'Empty'})
+    return new_df
+
+end_dataframe = return_all_dfs()
+
+end_dataframe.to_excel("merged_items.xlsx",index=False)

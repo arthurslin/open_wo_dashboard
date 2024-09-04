@@ -3,3 +3,6 @@ sap/SAP 1715-Bloomington Released Work Orders 8.20.24.XLSX
 sap/SAP 1720-Wilmington Released Work Orders 8.20.24.XLSX
 syspro/Syspro WIP_valuation_by_warehouse, 2024-08-20.xlsx
 merged_items.xlsx
+__pycache__/create_dashboard.cpython-312.pyc
+__pycache__/graph_functions.cpython-312.pyc
+__pycache__/merge_datasets.cpython-312.pyc

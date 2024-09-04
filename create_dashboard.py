@@ -103,7 +103,7 @@ def create_wip_value_distribution_plot(df_selection):
     
     st.pyplot(fig)
 
-st.title("WO Age Distribution Analysis")
+st.title("WO Age Distribution with WIP Value Sum")
 
 col1, col2 = st.columns(2)
 

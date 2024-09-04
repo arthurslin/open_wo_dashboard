@@ -6,7 +6,7 @@ import matplotlib.ticker as ticker
 
 def plot_wo_age_bucket(df_selection=None):
     try:
-        if df_selection is None or df_selection.empty or len(df_selection)<5:
+        if df_selection is None or df_selection.empty:
             print("No data available.")
             return
 
@@ -16,7 +16,11 @@ def plot_wo_age_bucket(df_selection=None):
         df_filtered = df_filtered.dropna(subset=['WO Age'])
 
         max_age = df_filtered['WO Age'].max()
-        bins = range(0, int(max_age) + 101, 100)
+        try:
+            bins = range(0, int(max_age) + 101, 100)
+        except:
+            st.title("No Work Order Ages found.")
+            return
        
         labels = [f'{i}-{i+99}' for i in bins[:-1]]
         
@@ -32,13 +36,13 @@ def plot_wo_age_bucket(df_selection=None):
 
         fig, ax1 = plt.subplots(figsize=(16, 8))
 
-        color = 'tab:red'
+        color = 'tab:blue'
         ax1.set_xlabel('WO Age Bucket')
         ax1.set_ylabel('Frequency', color=color)
         ax1.bar(result_df['WO Age Bucket'], result_df['Frequency'], color=color, edgecolor='black')
 
         ax2 = ax1.twinx()
-        color = 'tab:blue'
+        color = 'tab:red'
         ax2.set_ylabel('Sum of WIP Value (Millions)', color=color)
         ax2.bar(result_df['WO Age Bucket'], result_df['WIP Value'], color=color, width=0.20, edgecolor='black')
 

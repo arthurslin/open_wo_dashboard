@@ -13,24 +13,20 @@ st.set_page_config(page_title="Work Order Dashboard",
 
 st.sidebar.header("Filters: ")
 
-# Function to create multiselect widget
 def create_multiselect(name, options, default=None):
     if default is None:
         default = options
     return st.sidebar.multiselect(f"Select {name}", options=options, default=default)
 
-# Function to build query condition
 def build_condition(column, selected_values):
     if len(selected_values) < len(df[column].unique()):
         return f"({column} == {selected_values})"
     return ""
 
-# Function to create query string
 def create_query(filters):
     conditions = [build_condition(col, values) for col, values in filters.items()]
     return " & ".join(filter(None, conditions))
 
-# Create filters
 filters = {
     "SOURCE_SYSTEM": create_multiselect("Source System", df["SOURCE_SYSTEM"].unique()),
     "Status": create_multiselect("Status", df["Status"].unique()),
@@ -47,4 +43,5 @@ else:
 
 plot_wo_age_bucket(df_selection)
 
+st.title("Current dataset:")
 st.dataframe(df_selection, hide_index=True)

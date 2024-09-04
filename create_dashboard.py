@@ -48,10 +48,11 @@ def create_age_distribution_plot(df_selection):
         st.warning("WO Age column not found in the DataFrame.")
         return
     
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(12, 7))
     
+    # Add a new category for NaN values
     df_selection['WO Age'] = pd.to_numeric(df_selection['WO Age'], errors='coerce')
-    df_selection = df_selection.dropna(subset=['WO Age'])
+    # df_selection.loc[df_selection['WO Age'].isnull(), 'WO Age'] = -999  # Assign a sentinel value
     
     bins = range(0, int(df_selection['WO Age'].max()) + 101, 100)
     df_selection['WO Age_Binned'] = pd.cut(df_selection['WO Age'], bins=bins, right=False)
@@ -64,6 +65,10 @@ def create_age_distribution_plot(df_selection):
     ax.set_title('Distribution of WO Ages')
     plt.xticks(rotation=90)
     
+    # Adjust y-axis scale based on maximum count
+    max_count = counts.max()
+    ax.set_ylim(0, max_count * 1.1)
+    
     st.pyplot(fig)
 
 def create_wip_value_distribution_plot(df_selection):
@@ -71,10 +76,11 @@ def create_wip_value_distribution_plot(df_selection):
         st.warning("WO Age or WIP Value column not found in the DataFrame.")
         return
     
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(12, 7))
     
+    # Add a new category for NaN values
     df_selection['WO Age'] = pd.to_numeric(df_selection['WO Age'], errors='coerce')
-    df_selection = df_selection.dropna(subset=['WO Age'])
+    # df_selection.loc[df_selection['WO Age'].isnull(), 'WO Age'] = -999  # Assign a sentinel value
     
     bins = range(0, int(df_selection['WO Age'].max()) + 101, 100)
     df_selection['WO Age_Bucket'] = pd.cut(df_selection['WO Age'], bins=bins, right=False)
@@ -91,12 +97,19 @@ def create_wip_value_distribution_plot(df_selection):
     ax.set_title('Distribution of WO Ages by Sum of WIP Value')
     plt.xticks(rotation=90)
     
+    # Adjust y-axis scale based on maximum sum
+    max_sum = wip_sums.max()
+    ax.set_ylim(0, max_sum * 1.1)
+    
     st.pyplot(fig)
 
 st.title("WO Age Distribution Analysis")
+
 col1, col2 = st.columns(2)
+
 with col1:
     create_age_distribution_plot(df_selection)
+
 with col2:
     create_wip_value_distribution_plot(df_selection)
 

@@ -18,24 +18,37 @@ def create_multiselect(name, options, default=None):
         default = options
     return st.sidebar.multiselect(f"Select {name}", options=options, default=default)
 
+# Modified build_condition function
 def build_condition(column, selected_values):
     if len(selected_values) < len(df[column].unique()):
-        return f"({column} == {selected_values})"
+        # Format the column name
+        if ' ' in column:
+            column_str = f"`{column}`"
+        else:
+            column_str = column
+        
+        # Format the selected values
+        formatted_values = ', '.join([f"'{value}'" for value in selected_values])
+        
+        return f"({column_str} in ({formatted_values}))"
     return ""
 
+# Function to create query string
 def create_query(filters):
     conditions = [build_condition(col, values) for col, values in filters.items()]
     return " & ".join(filter(None, conditions))
 
+# Create filters
 filters = {
     "SOURCE_SYSTEM": create_multiselect("Source System", df["SOURCE_SYSTEM"].unique()),
     "Status": create_multiselect("Status", df["Status"].unique()),
     "Org": create_multiselect("Organization", df["Org"].unique()),
-    "Job Type": create_multiselect("Job Type", df["Job Type"].unique())
+    "Job Type": create_multiselect("Job Type", df["Job Type"].unique()),
 }
 
 query_string = create_query(filters)
 
+print(query_string)
 if query_string:
     df_selection = df.query(query_string)
 else:

@@ -15,15 +15,17 @@ def plot_wo_age_bucket(df_selection=None):
         nan_df = df_selection[df_selection['WO Age'].isna()].copy()      
         df_filtered = df_filtered.dropna(subset=['WO Age'])
 
+        min_age = df_filtered['WO Age'].min()
         max_age = df_filtered['WO Age'].max()
-        try:
-            bins = range(0, int(max_age) + 101, 100)
-        except:
-            st.title("No Work Order Ages found.")
-            return
-       
-        labels = [f'{i}-{i+99}' for i in bins[:-1]]
+
+        # Calculate the first bin value (rounded up to nearest multiple of 100)
+        start_bin = ((min_age + 99) // 100) * 100
         
+        bins = range(int(start_bin),int(max_age) + 101, 100)
+        
+        # Generate labels that match the bins exactly
+        labels = [f'{i}-{j}' for i, j in zip(bins[:-1], bins[1:])]
+
         df_filtered['WO Age Bucket'] = pd.cut(df_filtered['WO Age'], bins=bins, labels=labels, right=False)
 
         freq_counts = df_filtered['WO Age Bucket'].value_counts().reset_index()
@@ -34,7 +36,7 @@ def plot_wo_age_bucket(df_selection=None):
         result_df = pd.merge(freq_counts, wip_sums, on='WO Age Bucket')
         result_df = result_df.sort_values('WO Age Bucket')
 
-        fig, ax1 = plt.subplots(figsize=(16, 8))
+        fig, ax1 = plt.subplots(figsize=(20, 10))
 
         color = 'tab:blue'
         ax1.set_xlabel('WO Age Bucket')

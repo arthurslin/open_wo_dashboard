@@ -46,6 +46,17 @@ filters = {
     "Job Type": create_multiselect("Job Type", df["Job Type"].unique()),
 }
 
+# Add WO Age slider
+min_age = df['WO Age'].min()
+max_age = df['WO Age'].max()
+
+age_range = st.sidebar.slider(
+    "Select WO Age range",
+    min_value=min_age,
+    max_value=max_age,
+    value=(0.0, max_age),
+)
+
 query_string = create_query(filters)
 
 print(query_string)
@@ -53,6 +64,9 @@ if query_string:
     df_selection = df.query(query_string)
 else:
     df_selection = df.copy()
+
+# Apply WO Age filter
+df_selection = df_selection[(df_selection['WO Age'] >= age_range[0]) & (df_selection['WO Age'] <= age_range[1])]
 
 plot_wo_age_bucket(df_selection)
 

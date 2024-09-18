@@ -48,11 +48,10 @@ def plot_wo_age_bucket(df_selection=None):
         ax2.set_ylabel('Sum of WIP Value (Millions)', color=color)
         ax2.bar(result_df['WO Age Bucket'], result_df['WIP Value'], color=color, width=0.20, edgecolor='black')
 
-        # Custom formatter for millions
-        def millions_formatter(x, pos):
-            return '${:,.1f}M'.format(x / 1_000_000)
+        def value_formatter(x, pos):
+            return '${:,.0f}'.format(x)
 
-        ax2.yaxis.set_major_formatter(ticker.FuncFormatter(millions_formatter))
+        ax2.yaxis.set_major_formatter(ticker.FuncFormatter(value_formatter))
 
         ax1.set_ylim(bottom=0, top=ax1.get_ylim()[1]*1.1)
         ax2.set_ylim(top=result_df['WIP Value'].max() * 1.1)

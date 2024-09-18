@@ -47,14 +47,15 @@ filters = {
 }
 
 # Add WO Age slider
-min_age = df['WO Age'].min()
-max_age = df['WO Age'].max()
+min_age = df['WO Age'].min().astype(int)
+max_age = df['WO Age'].max().astype(int)
 
 age_range = st.sidebar.slider(
     "Select WO Age range",
     min_value=min_age,
     max_value=max_age,
-    value=(0.0, max_age),
+    value=(int(0), max_age),
+    step=1
 )
 
 query_string = create_query(filters)
